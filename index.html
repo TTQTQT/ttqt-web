@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TRUNG TÂM QUAN TRẮC</title>
 
   <style>
@@ -10,14 +10,10 @@
       margin: 0;
       height: 100%;
       overflow: hidden;
+      background: #fff;
     }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
+    /* Loading screen */
     #loading {
       position: fixed;
       inset: 0;
@@ -25,45 +21,68 @@
       justify-content: center;
       align-items: center;
       font-family: Arial;
-      background: white;
+      font-size: 18px;
+      background: #ffffff;
+      z-index: 1000;
+    }
+
+    /* iframe full screen */
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* top bar (optional) */
+    #topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: #1e1e1e;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-family: Arial;
+      font-size: 14px;
+      z-index: 999;
     }
   </style>
 </head>
 
 <body>
 
-<div id="loading">Đang tải hệ thống...</div>
+<div id="loading">Đang tải hệ thống quan trắc...</div>
 
-<iframe id="frame"></iframe>
+<div id="topbar">
+  TRUNG TÂM QUAN TRẮC TỰ ĐỘNG
+</div>
+
+<iframe
+  id="frame"
+  src="https://script.google.com/macros/s/AKfycbylXTkucAE98WtxMSfaG-ydkdoDi_J4U-T0mfhj-CM8Mo30n7DurVuLr3ZNYEGLDjZH3w/exec">
+</iframe>
 
 <script>
+  const frame = document.getElementById("frame");
+  const loading = document.getElementById("loading");
 
-const API =
-  "https://script.google.com/macros/s/AKfycbylXTkucAE98WtxMSfaG-ydkdoDi_J4U-T0mfhj-CM8Mo30n7DurVuLr3ZNYEGLDjZH3w/exec";
+  // Khi iframe load xong
+  frame.onload = function () {
+    loading.style.display = "none";
+  };
 
-fetch(API)
-  .then(res => res.json())
-  .then(data => {
+  // fallback nếu load lâu
+  setTimeout(() => {
+    loading.style.display = "none";
+  }, 15000);
 
-    if (!data.url) {
-      document.getElementById("loading").innerText =
-        "Không có WebApp active";
-      return;
-    }
-
-    const frame = document.getElementById("frame");
-
-    frame.onload = () => {
-      document.getElementById("loading").style.display = "none";
-    };
-
-    frame.src = data.url;
-  })
-  .catch(err => {
-    document.getElementById("loading").innerText =
-      "Lỗi tải hệ thống";
-  });
-
+  // Nếu lỗi (một số browser không trigger đầy đủ)
+  frame.onerror = function () {
+    loading.innerText = "Không thể tải hệ thống";
+  };
 </script>
 
 </body>
